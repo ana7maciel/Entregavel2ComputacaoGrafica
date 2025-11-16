@@ -119,7 +119,7 @@ def translate(x, y, z):
 
 #estado da aplicação
 class State:
-    def _init_(self):
+    def __init__(self):
         self.pos = np.array([0, 0, 3], np.float32) #posição da câmera
         self.yaw = -90 #rotação horizontal
         self.pitch = 0 #rotação vertical
@@ -308,7 +308,8 @@ def main():
     fps_counter.cleanup()
     glfw.terminate()
 
-if __name__ == "_main_":
+if __name__ == "__main__":
     main()
+
 
 

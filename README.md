@@ -1,4 +1,4 @@
-# Entregavel2ComputacaoGrafica
+# Entregável 2 - Computação Gráfica
 
 Disciplina: Computação Gráfica | Alunos: Ana Karolina Maciel, Carlo e Eduardo Fagundes
 
@@ -34,6 +34,35 @@ Descrição das Funcionalidades:
 - Sistema de filtros;
 - FPSCounter oficial;
 - V-Sync ativado.
+
+4. FPSCounter (Extra)
+- Utiliza a classe oficial passada em aula;
+- Médias móveis;
+- Estatísticas (min, max, media);
+- Renderização na tela;
+- Integração com V-Sync habilitado.
+
+5. V-Sync (Extra)
+- Ativado via glfw.swap;
+- Elimina tearing;
+- Estabiliza FPS;
+- Reduz consumo de GPU;
+- Mantém sincronia com a frequência do monitor.
+
+Como rodar:
+*O requirements está em um arquivo .txt no ambiente de códigos*
+1. Rodando o conv2dcam3d.py
+- Arquivos necessários: conv2dcam3d.py, fpscounter.py, templo.png, requirements.txt
+- Execução: pip install -r requirements.txt
+python conv2dcam3d.py
+- Controles:
+Trocar Kernel: teclas de 1 a 6
+Tons de cinza: mouse esquerdo
+Reset: mouse direito
+Mover câmera frente\trás: teclas W e S
+Mover câmera esquerda/direita: teclas A e D
+Subir e descer a câmera: shift e espaço
+Rotação: setas para os 4 lados
 
 ROADMAP (Melhorias):
 - Adicionar novos kernels (Gaussian Blur, Motion Blur, Boom, por exemplo)

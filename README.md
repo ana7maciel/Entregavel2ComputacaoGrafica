@@ -2,7 +2,7 @@
 
 Disciplina: Computação Gráfica | Alunos: Ana Karolina Maciel, Carlo e Eduardo Fagundes
 
-Link Repositório:
+Link Repositório: https://github.com/ana7maciel/Entregavel2ComputacaoGrafica.git
 
 Elevator Pitch:
 Esta aplicação demonstra, de forma interativa e em tempo real, o uso de filtros de convolução aplicados a uma imagem de um templo. O usuário pode alternar dinamicamente entre cinco kernels diferentes, ativar o modo em tons de cinza e restaurar a imagem original com apenas um clique.

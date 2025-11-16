@@ -55,7 +55,9 @@ Como rodar:
 Execução:
 - pip install -r requirements.txt
 - python conv2dcam3d.py
+
 Controles:
+
 - Trocar Kernel: teclas de 1 à 6
 - Tons de cinza: clique esquerdo
 - Reset: clique direito

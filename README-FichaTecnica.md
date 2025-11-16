@@ -4,19 +4,17 @@ Disciplina: Computação Gráfica | Alunos: Ana Karolina Maciel, Carlo e Eduardo
 
 Link Repositório: https://github.com/ana7maciel/Entregavel2ComputacaoGrafica.git
 
-Elevator Pitch:
-Esta aplicação demonstra, de forma interativa e em tempo real, o uso de filtros de convolução aplicados à imagem de um templo. O usuário pode alternar dinamicamente entre cinco kernels diferentes, ativar o modo em tons de cinza e restaurar a imagem original com apenas um clique.
-Além disso, o projeto inclui uma câmera 3D completa, com movimentação em primeira pessoa e rotação do ponto de vista, proporcionando uma experiência imersiva. Para complementar, foram implementados um contador de FPS e V-Sync, garantindo desempenho fluido.
-É a integração entre conceitos de 2D, 3D e pós-processamento, reunidos em um único código.
+Elevator Pitch: Esta aplicação demonstra, de forma interativa e em tempo real, o uso de filtros de convolução aplicados à imagem de um templo. O usuário pode alternar dinamicamente entre cinco kernels diferentes, ativar o modo em tons de cinza e restaurar a imagem original com apenas um clique. Além disso, o projeto inclui uma câmera 3D completa, com movimentação em primeira pessoa e rotação do ponto de vista, proporcionando uma experiência imersiva. Para complementar, foram implementados um contador de FPS e V-Sync, garantindo desempenho fluido. É a integração entre conceitos de 2D, 3D e pós-processamento, reunidos em um único código.
 
 Descrição das Funcionalidades:
+
 1. Convolução 2D
 - Renderiza a imagem em quadrado 2D;
-- Cinco (seis com o filtro neutro) Kernels implementados no Fragment Shader;
-- Shaders: Normal (Neutro), Blur, Sharpen, Bordas, Emboss e Outline;
-- Alternância de filtros via teclado (teclas de 1 à 6);
-- Tonalidade cinza: clique esquerdo;
-- Reset: clique direito;
+- Cinco kernels implementados no Fragment Shader;
+- Shaders: Blur, Sharpen, Bordas, Emboss e Outline;
+- Alternância de filtros via teclado (teclas de 1 à 5);
+- Tonalidade cinza (ON/OFF): clique esquerdo;
+- Reset total: clique direito;
 - Todo o processamento acontece na GPU.
 
 2. Manipulação 3D
@@ -50,27 +48,38 @@ Descrição das Funcionalidades:
 - Mantém sincronia com a frequência do monitor.
 
 Como rodar:
-*Os requirements estão em um arquivo .txt no repositório*
-- Arquivos necessários: conv2dcam3d.py, fpscounter.py, templo.png, requirements.txt.
+Os requirements estão em um arquivo .txt no repositório
 
+Arquivos necessários: conv2dcam3d.py, fpscounter.py, templo.png, requirements.txt.
 Execução:
 
-1. pip install -r requirements.txt
-2. python conv2dcam3d.py
+pip install -r requirements.txt
+python conv2dcam3d.py
 
 Controles:
-
-- Trocar Kernel: teclas de 1 à 6
-- Tons de cinza: clique esquerdo
-- Reset: clique direito
-- Mover câmera frente\trás: teclas W e S
-- Mover câmera esquerda/direita: teclas A e D
-- Subir e descer a câmera: shift e espaço
-- Rotação: setas para os 4 lados
-
+Trocar Kernel: teclas de 1 à 5
+Tons de cinza: clique esquerdo
+Reset: clique direito
+Mover câmera frente\trás: teclas W e S
+Mover câmera esquerda/direita: teclas A e D
+Subir e descer a câmera: shift e espaço
+Rotação: setas para os 4 lados
 ROADMAP (Melhorias):
-- Adicionar novos kernels (Gaussian Blur, Motion Blur, Boom, por exemplo);
-- Adicionar menu para melhor navegação;
-- Carregamento dinâmico de imagens;
-- Múltiplos objetos/programas;
-- Melhorar a forma de reset da imagem.
+
+Adicionar novos kernels (Gaussian Blur, Motion Blur, Boom, por exemplo);
+Adicionar menu para melhor navegação;
+Carregamento dinâmico de imagens;
+Múltiplos objetos/programas;
+Melhorar a forma de reset da imagem.
+
+Comparação de Tempos:
+
+No OpenCV, O tempo de execução para aplicação dos filtros Blur, Sharpen, Bordas, Emboss e Outline foi de respectivamente 0.0108, 0.0058, 0.0050, 0.0045 e 0.0058 segundos, uma média de 0.0023 segundos.
+
+No OpenGL, o tempo de execução para aplicação são, respectivamente:
+Blur: 0.010900 segundos
+Detecção de Bordas: 0,007390 segundos
+Sharpen: 0,008920 segundos
+Emboss: 0,009292 segundos
+Outline: 0,005534
+Totalizando uma média de 0,009885 segundos.

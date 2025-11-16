@@ -52,17 +52,17 @@ Descrição das Funcionalidades:
 Como rodar:
 *Os requirements estão em um arquivo .txt no repositório*
 - Arquivos necessários: conv2dcam3d.py, fpscounter.py, templo.png, requirements.txt.
-- Execução:
--   pip install -r requirements.txt
--   python conv2dcam3d.py
-- Controles:
--   Trocar Kernel: teclas de 1 à 6
--   Tons de cinza: clique esquerdo
--   Reset: clique direito
--   Mover câmera frente\trás: teclas W e S
--   Mover câmera esquerda/direita: teclas A e D
--   Subir e descer a câmera: shift e espaço
--   Rotação: setas para os 4 lados
+Execução:
+- pip install -r requirements.txt
+- python conv2dcam3d.py
+Controles:
+- Trocar Kernel: teclas de 1 à 6
+- Tons de cinza: clique esquerdo
+- Reset: clique direito
+- Mover câmera frente\trás: teclas W e S
+- Mover câmera esquerda/direita: teclas A e D
+- Subir e descer a câmera: shift e espaço
+- Rotação: setas para os 4 lados
 
 ROADMAP (Melhorias):
 - Adicionar novos kernels (Gaussian Blur, Motion Blur, Boom, por exemplo);

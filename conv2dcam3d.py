@@ -8,6 +8,7 @@ import math
 from fpscounter import FPSCounter
 
 #criação dos shaders no mesmo código pra não dar erro de localização
+#vertex shader recebe posição e UV, aplica MVP e repassa UV
 VERT_SHADER = """
 #version 330 core
 layout (location = 0) in vec3 aPos;
@@ -21,7 +22,7 @@ void main() {
     uv = aUV;
 }
 """
-
+#fragment shader aplica convolução (kernel 3x3) e modo cinza opcional
 FRAG_SHADER = """
 #version 330 core
 in vec2 uv;
@@ -54,6 +55,7 @@ void main() {
 """
 
 #funções auxiliares
+#compila shaders
 def compileShader(shaderType, source):
     shader = glCreateShader(shaderType)
     glShaderSource(shader, source)
@@ -62,8 +64,7 @@ def compileShader(shaderType, source):
     if glGetShaderiv(shader, GL_COMPILE_STATUS) != GL_TRUE:
         raise RuntimeError(glGetShaderInfoLog(shader).decode())
     return shader
-
-
+#carrega textura usando PIL
 def loadTexture(path):
     img = Image.open(path).transpose(Image.FLIP_TOP_BOTTOM).convert("RGB")
     width, height = img.size
@@ -81,6 +82,7 @@ def loadTexture(path):
     return tex
 
 #matrizes de transformação
+#projeção perspectiva
 def perspective(fov, aspect, near, far):
     f = 1 / math.tan(math.radians(fov) / 2)
 
@@ -92,8 +94,7 @@ def perspective(fov, aspect, near, far):
     M[3, 2] = (2 * far * near) / (near - far)
 
     return M
-
-
+#ponto de vista da câmera
 def lookAt(pos, target, up):
     f = target - pos
     f /= np.linalg.norm(f)
@@ -110,8 +111,7 @@ def lookAt(pos, target, up):
     M[:3, 3] = -np.dot(M[:3, :3], pos)
 
     return M
-
-
+#apenas translação (modelo)
 def translate(x, y, z):
     M = np.identity(4, np.float32)
     M[3, :3] = [x, y, z]
@@ -120,13 +120,13 @@ def translate(x, y, z):
 #estado da aplicação
 class State:
     def _init_(self):
-        self.pos = np.array([0, 0, 3], np.float32)
-        self.yaw = -90
-        self.pitch = 0
-        self.speed = 0.12
+        self.pos = np.array([0, 0, 3], np.float32) #posição da câmera
+        self.yaw = -90 #rotação horizontal
+        self.pitch = 0 #rotação vertical
+        self.speed = 0.12 #velocidade de movimento
 
-        self.gray = False
-
+        self.gray = False #modo cinza
+        #kernels usados na convolução, o nr 1 é um filtro neutro para o reset
         self.kernels = {
             1: np.array([0,0,0,0,1,0,0,0,0], np.float32),    #normal
             2: np.array([1,2,1,2,4,2,1,2,1], np.float32) / 16.0,  #blur
@@ -137,7 +137,7 @@ class State:
         }
 
         self.kernel = self.kernels[1]
-
+    #direção da câmera baseada em yaw/pitch
     def front(self):
         yaw = math.radians(self.yaw)
         pitch = math.radians(self.pitch)
@@ -148,29 +148,29 @@ class State:
             math.sin(yaw) * math.cos(pitch)
         ], np.float32)
 
-#callbacks
+#callbacks teclado e mouse
 def keyCallback(win, key, scancode, action, mods):
     if action not in (glfw.PRESS, glfw.REPEAT):
         return
 
     state = glfw.get_window_user_pointer(win)
-
+    #movimentação
     forward = state.front()
     right = np.cross(forward, np.array([0, 1, 0], np.float32))
     right /= np.linalg.norm(right)
-
+    
     if key == glfw.KEY_W: state.pos += forward * state.speed
     if key == glfw.KEY_S: state.pos -= forward * state.speed
     if key == glfw.KEY_A: state.pos -= right * state.speed
     if key == glfw.KEY_D: state.pos += right * state.speed
     if key == glfw.KEY_SPACE: state.pos[1] -= state.speed
     if key == glfw.KEY_LEFT_SHIFT: state.pos[1] += state.speed
-
+    #rotação da câmera
     if key == glfw.KEY_LEFT: state.yaw -= 2
     if key == glfw.KEY_RIGHT: state.yaw += 2
     if key == glfw.KEY_UP: state.pitch += 2
     if key == glfw.KEY_DOWN: state.pitch -= 2
-
+    #troca de kernel
     mapping = {glfw.KEY_1:1, glfw.KEY_2:2, glfw.KEY_3:3,
                glfw.KEY_4:4, glfw.KEY_5:5, glfw.KEY_6:6}
 
@@ -180,10 +180,10 @@ def keyCallback(win, key, scancode, action, mods):
 
 def mouseButtonCallback(win, button, action, mods):
     state = glfw.get_window_user_pointer(win)
-
+    #verificação do modo cinza
     if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
         state.gray = not state.gray
-
+    #reset da imagem
     if button == glfw.MOUSE_BUTTON_RIGHT and action == glfw.PRESS:
         state.pos[:] = [0, 0, 3]
         state.yaw = -90
@@ -210,7 +210,7 @@ def main():
     glfw.set_mouse_button_callback(win, mouseButtonCallback)
 
     glEnable(GL_DEPTH_TEST)
-
+    #2 triângulos com posição e UV
     quad = np.array([
         -1,  1, 0, 0, 1,
         -1, -1, 0, 0, 0,
@@ -219,7 +219,7 @@ def main():
          1,  1, 0, 1, 1,
         -1,  1, 0, 0, 1,
     ], np.float32)
-
+    #criação de VAO e VBO
     vao = glGenVertexArrays(1)
     vbo = glGenBuffers(1)
 
@@ -233,7 +233,7 @@ def main():
 
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, ctypes.c_void_p(12))
     glEnableVertexAttribArray(1)
-
+    #criação shader program
     vs = compileShader(GL_VERTEX_SHADER, VERT_SHADER)
     fs = compileShader(GL_FRAGMENT_SHADER, FRAG_SHADER)
 
@@ -242,12 +242,11 @@ def main():
     glAttachShader(programId, fs)
     glLinkProgram(programId)
     glUseProgram(programId)
-
+    #variáveis uniforms
     locMvp = glGetUniformLocation(programId, "MVP")
     locKernel = glGetUniformLocation(programId, "kernel")
     locGray = glGetUniformLocation(programId, "gray")
-
-    
+    #fix do sampler2D - ligando textura na unidade 0
     locTex = glGetUniformLocation(programId, "tex")
     glUniform1i(locTex, 0)
     glActiveTexture(GL_TEXTURE0)
@@ -262,7 +261,6 @@ def main():
     fps_counter.initialize_text_rendering(winWidth, winHeight)
     fps_counter.enable_stats_printing(True)
 
-    #loop principal fps
     while not glfw.window_should_close(win):
 
         #update fps
@@ -270,7 +268,7 @@ def main():
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         glUseProgram(programId)
-
+        #matrizes da cena
         proj = perspective(45, 800 / 600, 0.1, 100)
         view = lookAt(state.pos, state.pos + state.front(), np.array([0, 1, 0], np.float32))
         model = translate(0, 0, -3)
@@ -280,7 +278,7 @@ def main():
         glUniformMatrix4fv(locMvp, 1, GL_FALSE, MVP)
         glUniform1fv(locKernel, 9, state.kernel)
         glUniform1i(locGray, int(state.gray))
-
+        #renderização do quadrado com textura e convolução
         glBindTexture(GL_TEXTURE_2D, tex)
         glBindVertexArray(vao)
         glDrawArrays(GL_TRIANGLES, 0, 6)
@@ -299,3 +297,4 @@ def main():
 
 if __name__ == "_main_":
     main()
+

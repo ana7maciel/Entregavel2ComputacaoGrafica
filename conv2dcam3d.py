@@ -127,7 +127,7 @@ class State:
 
         self.gray = False #modo cinza
         #kernels usados na convolução, o nr 1 é um filtro neutro para o reset
-        self.kernels = {
+        self.kernels = {   # ← Kernel 1 será ignorado
             1: np.array([0,0,0,0,1,0,0,0,0], np.float32),    #normal
             2: np.array([1,2,1,2,4,2,1,2,1], np.float32) / 16.0,  #blur
             3: np.array([1,1,1,1,-8,1,1,1,1], np.float32),   #bordas
@@ -136,7 +136,8 @@ class State:
             6: np.array([-1,-1,-1,-1,8,-1,-1,-1,-1], np.float32) #outline
         }
 
-        self.kernel = self.kernels[1]
+        self.kernel = self.kernels[1]  # ← manter comentário, mas o reset não usa mais isso
+
     #direção da câmera baseada em yaw/pitch
     def front(self):
         yaw = math.radians(self.yaw)
@@ -147,6 +148,10 @@ class State:
             math.sin(pitch),
             math.sin(yaw) * math.cos(pitch)
         ], np.float32)
+
+# ---- VARIÁVEL GLOBAL PARA A TEXTURA ----
+texture_path = "templo.png"
+tex = None
 
 #callbacks teclado e mouse
 def keyCallback(win, key, scancode, action, mods):
@@ -170,29 +175,44 @@ def keyCallback(win, key, scancode, action, mods):
     if key == glfw.KEY_RIGHT: state.yaw += 2
     if key == glfw.KEY_UP: state.pitch += 2
     if key == glfw.KEY_DOWN: state.pitch -= 2
-    #troca de kernel
-    mapping = {glfw.KEY_1:1, glfw.KEY_2:2, glfw.KEY_3:3,
-               glfw.KEY_4:4, glfw.KEY_5:5, glfw.KEY_6:6}
+
+    #troca de kernel (REMOVIDO o 1)
+    mapping = {
+        glfw.KEY_2: 2,
+        glfw.KEY_3: 3,
+        glfw.KEY_4: 4,
+        glfw.KEY_5: 5,
+        glfw.KEY_6: 6
+    }
 
     if key in mapping:
         state.kernel = state.kernels[mapping[key]]
 
 
 def mouseButtonCallback(win, button, action, mods):
+    global tex
     state = glfw.get_window_user_pointer(win)
     #verificação do modo cinza
     if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
-        state.gray = True
+        state.gray = not state.gray
     #reset da imagem
     if button == glfw.MOUSE_BUTTON_RIGHT and action == glfw.PRESS:
         state.pos[:] = [0, 0, 3]
         state.yaw = -90
         state.pitch = 0
         state.gray = False
-        state.kernel = state.kernels[1]
+
+        #recarrega a imagem original
+        tex = loadTexture(texture_path)
+
+        #zera o filtro de convolução
+        identify_kernel = np.array([0,0,0,0,1,0,0,0,0], np.float32)
+        state.kernel = identify_kernel
 
 #loop principal
 def main():
+    global tex
+
     glfw.init()
     glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
     glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
@@ -252,7 +272,7 @@ def main():
     glActiveTexture(GL_TEXTURE0)
     # ------------------------------------------------------
 
-    tex = loadTexture("templo.png")
+    tex = loadTexture(texture_path)
 
     #fps counter
     winWidth, winHeight = glfw.get_window_size(win)
@@ -310,7 +330,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-

@@ -1,0 +1,5 @@
+glfw
+pyopengl
+numpy
+pillow
+opencv-python

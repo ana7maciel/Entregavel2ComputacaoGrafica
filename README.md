@@ -52,9 +52,11 @@ Descrição das Funcionalidades:
 Como rodar:
 *Os requirements estão em um arquivo .txt no repositório*
 - Arquivos necessários: conv2dcam3d.py, fpscounter.py, templo.png, requirements.txt.
+
 Execução:
-- pip install -r requirements.txt
-- python conv2dcam3d.py
+
+1. pip install -r requirements.txt
+2. python conv2dcam3d.py
 
 Controles:
 

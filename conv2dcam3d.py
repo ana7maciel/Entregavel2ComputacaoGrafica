@@ -290,11 +290,25 @@ def main():
         glfw.swap_buffers(win)
         glfw.poll_events()
 
+    #limpeza
+    glBindVertexArray(0)
+    glBindTexture(GL_TEXTURE_2D, 0)
+    glUseProgram(0)
+
+    glDeleteShader(vs)
+    glDeleteShader(fs)
+
+    glDeleteProgram(programId)
+
+    glDeleteBuffers(1, [vbo])
+    glDeleteVertexArrays(1, [vao])
+
+    glDeleteTextures([tex])
 
     fps_counter.cleanup()
     glfw.terminate()
 
-
 if __name__ == "_main_":
     main()
+
 

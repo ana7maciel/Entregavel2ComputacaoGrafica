@@ -182,7 +182,7 @@ def mouseButtonCallback(win, button, action, mods):
     state = glfw.get_window_user_pointer(win)
     #verificação do modo cinza
     if button == glfw.MOUSE_BUTTON_LEFT and action == glfw.PRESS:
-        state.gray = not state.gray
+        state.gray = True
     #reset da imagem
     if button == glfw.MOUSE_BUTTON_RIGHT and action == glfw.PRESS:
         state.pos[:] = [0, 0, 3]
@@ -310,6 +310,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
